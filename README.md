@@ -40,3 +40,7 @@ if ($vkAPI->postToPublic($publicID, "Hello world", $attachments, ['#вконта
 }
 
 ```
+
+## TODO
+
+* change composer.json
