@@ -1,7 +1,7 @@
-vkontakte-php-sdk
+vkontakte-wall-posting
 =================
 
-Vkontakte PHP SDK
+Vkontakte Wall Posting
 
 An example of VK API usage. The code looks like
 
