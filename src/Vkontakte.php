@@ -348,37 +348,35 @@ class Vkontakte
     {
         $attach_images = [];
 
-        foreach ($attachments as $attachment) {
-            if('image' == $attachment['type']) {
-                if(isset($attachment['url'])) {
-                    $image_name = explode('/', $attachment['url']);
-                    $image_name = $image_name[count($image_name) - 1];
+        foreach ($attachments['images'] as $image) {
+            if(isset($image['url'])) {
+                $image_name = explode('/', $image['url']);
+                $image_name = $image_name[count($image_name) - 1];
 
-                    $fullServerPathToImage = __DIR__ . "/tmp/$image_name";
-                    file_put_contents($fullServerPathToImage, file_get_contents($attachment['url']));
-                } elseif(isset($attachment['path'])) {
-                    $fullServerPathToImage = $attachment['path'];
-                }
-
-                $response = $this->api('photos.getWallUploadServer', [
-                    'group_id' => $publicID,
-                ]);
-
-                $uploadURL = $response->upload_url;
-                $output = [];
-                exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
-                $response = json_decode($output[0]);
-
-                $response = $this->api('photos.saveWallPhoto', [
-                    'group_id' => $publicID,
-                    'photo' => $response->photo,
-                    'server' => $response->server,
-                    'hash' => $response->hash,
-                ]);
-
-                $attach_images[] = $response[0]->id;
-                unlink($fullServerPathToImage);
+                $fullServerPathToImage = __DIR__ . "/tmp/$image_name";
+                file_put_contents($fullServerPathToImage, file_get_contents($image['url']));
+            } elseif(isset($image['path'])) {
+                $fullServerPathToImage = $image['path'];
             }
+
+            $response = $this->api('photos.getWallUploadServer', [
+                'group_id' => $publicID,
+            ]);
+
+            $uploadURL = $response->upload_url;
+            $output = [];
+            exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
+            $response = json_decode($output[0]);
+
+            $response = $this->api('photos.saveWallPhoto', [
+                'group_id' => $publicID,
+                'photo' => $response->photo,
+                'server' => $response->server,
+                'hash' => $response->hash,
+            ]);
+
+            $attach_images[] = $response[0]->id;
+            unlink($fullServerPathToImage);
         }
 
         $tag_text = '';
@@ -393,7 +391,7 @@ class Vkontakte
         $text = html_entity_decode($text);
 
         $attachments_string = "";
-        $attachments_string .= $attachments[0]['url'];
+        $attachments_string .= $attachments['link'];
         foreach ($attach_images as $image_id) {
             $attachments_string .= ',' . $image_id;
         }

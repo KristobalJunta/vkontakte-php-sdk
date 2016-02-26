@@ -13,21 +13,20 @@ $publicID = 'your public ID here';
 $vkAPI = new \Junta\Vkontakte(['access_token' => $accessToken]);
 
 $attachments = [
-    # attaching image by url
-    [
-        'type' => 'image',
-        'url' => 'image-link'
-    ],
-    # attaching image by full file path
-    [
-        'type' => 'image',
-        'path' => '/full/path/to/image'
-    ],
-    # attaching link (only one allowed!)
-    [
-        'type' => 'link',
-        'url' => 'link-url'
+    'images' => [
+        # attaching image by url
+        [
+            'type' => 'image',
+            'url' => 'image-link'
+        ],
+        # attaching image by full file path
+        [
+            'type' => 'image',
+            'path' => '/full/path/to/image'
+        ]
     ]
+    # attaching link (there can be only one)
+    'link' => 'link-url'
 ];
 
 if ($vkAPI->postToPublic($publicID, "Hello world", $attachments, ['#вконтакте api', '#автопостинг', '#первые шаги'])) {
