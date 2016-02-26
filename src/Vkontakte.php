@@ -1,12 +1,13 @@
 <?php
-
-namespace BW;
-
 /**
- * The Vkontakte PHP SDK
+ * The Vkontakte PHP SDK fork
+ * Made for posting to group walls
  *
- * @author Bocharsky Victor, https://github.com/Vastly
+ * @author Kristobal Junta, https://github.com/KristobalJunta
  */
+
+namespace Junta;
+
 class Vkontakte
 {
 
@@ -48,7 +49,6 @@ class Vkontakte
      */
     private $accessToken;
 
-
     /**
      * The Vkontakte instance constructor for quick configuration
      * @param array $config
@@ -56,7 +56,6 @@ class Vkontakte
     public function __construct(array $config)
     {
         if (isset($config['access_token'])) {
-
             $this->setAccessToken(json_encode(['access_token' => $config['access_token']]));
         }
         if (isset($config['app_id'])) {
@@ -76,14 +75,12 @@ class Vkontakte
         }
     }
 
-
     /**
      * Get the user id of current access token
      * @return integer
      */
     public function getUserId()
     {
-
         return $this->accessToken->user_id;
     }
 
@@ -340,88 +337,75 @@ class Vkontakte
         return $result;
     }
 
-
     /**
      * @param $publicID int vk group official identifier
-     * @param $fullServerPathToImage string full path to the image file, ex. /var/www/site/img/pic.jpg
      * @param $text string message text
+     * @param $attachments array message attachments
      * @param $tags array message tags
      * @return bool true if operation finished successfully and false otherwise
      */
-    public function postToPublic($publicID, $text, $fullServerPathToImage, $tags = array())
+    public function postToPublic($publicID, $text, $attachments, $tags = array())
     {
+        $attach_images = [];
 
+        foreach ($attachments as $attachment) {
+            if('image' == $attachment['type']) {
+                if(isset($attachment['url'])) {
+                    $image_name = explode('/', $attachment['url']);
+                    $image_name = $image_name[count($image_name) - 1];
 
-        $response = $this->api('photos.getWallUploadServer', [
+                    $fullServerPathToImage = __DIR__ . "/tmp/$image_name";
+                    file_put_contents($fullServerPathToImage, file_get_contents($attachment['url']));
+                } elseif(isset($attachment['path'])) {
+                    $fullServerPathToImage = $attachment['path'];
+                }
 
-            'group_id' => $publicID,
-        ]);
-        /*
-         * public 'upload_url' => string 'http://cs618028.vk.com/upload.php?act=do_add&mid=76989657&aid=-14&gid=70941690&hash=0c9cdfa73779ea6c904c4b5326368700&rhash=ba9b60e61e258bf8fd61536e6683e3af&swfupload=1&api=1&wallphoto=1' (length=185)
-              public 'aid' => int -14
-              public 'mid' => int 76989657
-         *
-         *  */
+                $response = $this->api('photos.getWallUploadServer', [
+                    'group_id' => $publicID,
+                ]);
 
-        $uploadURL = $response->upload_url;
-        $output = [];
-        exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
-        $response = json_decode($output[0]);
-        /*
-         *  public 'server' => int 618028
-              public 'photo' => string '[{"photo":"96df595e0b:z","sizes":[["s","618028657","c5b1","RfjznPPyhxs",75,54],["m","618028657","c5b2","dQRTijvf4tE",130,93],["x","618028657","c5b3","-zUzUi-uOkU",604,432],["y","618028657","c5b4","FAAY0vnMSWc",807,577],["z","618028657","c5b5","OBZqwGjlO9s",900,644],["o","618028657","c5b6","Ku7Q6IqN5uc",130,93],["p","618028657","c5b7","0eFhSRrjxvU",200,143],["q","618028657","c5b8","F8E6QJg51o4",320,229],["r","618028657","c5b9","-a3oiI8SVOg",510,365]],"kid":"6bba9104fa05dd017597abce3ebeb215"}]' (length=496)
-              public 'hash' => string 'd02d83e70eca1c0d756d1a5d51c2fbfb' (length=32)
-         */
+                $uploadURL = $response->upload_url;
+                $output = [];
+                exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
+                $response = json_decode($output[0]);
 
+                $response = $this->api('photos.saveWallPhoto', [
+                    'group_id' => $publicID,
+                    'photo' => $response->photo,
+                    'server' => $response->server,
+                    'hash' => $response->hash,
+                ]);
 
-        $response = $this->api('photos.saveWallPhoto', [
-            'group_id' => $publicID,
-            'photo' => $response->photo,
-            'server' => $response->server,
-            'hash' => $response->hash,
-        ]);
-        /*
- *
- * array (size=1)
-0 =>
-object(stdClass)[93]
-public 'pid' => int 333363577
-public 'id' => string 'photo76989657_333363577' (length=23)
-public 'aid' => int -14
-public 'owner_id' => int 76989657
-public 'src' => string 'http://cs618028.vk.me/v618028657/c5c4/CJkUGsTNMNc.jpg' (length=53)
-public 'src_big' => string 'http://cs618028.vk.me/v618028657/c5c5/6G5kG2qrd0A.jpg' (length=53)
-public 'src_small' => string 'http://cs618028.vk.me/v618028657/c5c3/NjaefgAEqFA.jpg' (length=53)
-public 'src_xbig' => string 'http://cs618028.vk.me/v618028657/c5c6/dyX4tBB3yaI.jpg' (length=53)
-public 'src_xxbig' => string 'http://cs618028.vk.me/v618028657/c5c7/r8xGBKsau9c.jpg' (length=53)
-public 'width' => int 900
-public 'height' => int 644
-public 'text' => string '' (length=0)
-public 'created' => int 1402950212
- *
- */
-
-        if ($tags) {
-            $text .= "\n\n";
+                $attach_images[] = $response[0]->id;
+                unlink($fullServerPathToImage);
+            }
         }
+
+        $tag_text = '';
         foreach ($tags as $tag) {
-
-            $text .= ' #' . str_replace(' ', '_', $tag);
+            $tag_text .= ' ' . str_replace(' ', '_', $tag);
         }
+        if ($tags) {
+            $tag_text .= "\n\n";
+        }
+        $text = $tag_text . $text;
+
         $text = html_entity_decode($text);
+
+        $attachments_string = "";
+        $attachments_string .= $attachments[0]['url'];
+        foreach ($attach_images as $image_id) {
+            $attachments_string .= ',' . $image_id;
+        }
+
         $response = $this->api('wall.post',
             [
                 'owner_id' => -$publicID,
                 'from_group' => 1,
                 'message' => "$text",
-                'attachments' => "{$response[0]->id}", // uploaded image is passed as attachment
-
-
+                'attachments' => $attachments_string, // uploaded image is passed as attachment
             ]);
 
-
         return isset($response->post_id);
-
-
     }
 }
