@@ -342,9 +342,10 @@ class Vkontakte
      * @param $text string message text
      * @param $attachments array message attachments
      * @param $tags array message tags
+     * @param $publish_date (optional) string post publication date if it is a delayed post
      * @return bool true if operation finished successfully and false otherwise
      */
-    public function postToPublic($publicID, $text, $attachments, $tags = array())
+    public function postToPublic($publicID, $text, $attachments, $tags = array(), $publish_date)
     {
         $attach_images = [];
 
@@ -396,13 +397,18 @@ class Vkontakte
             $attachments_string .= ',' . $image_id;
         }
 
-        $response = $this->api('wall.post',
-            [
-                'owner_id' => -$publicID,
-                'from_group' => 1,
-                'message' => "$text",
-                'attachments' => $attachments_string, // uploaded image is passed as attachment
-            ]);
+        $api_request = [
+            'owner_id' => -$publicID,
+            'from_group' => 1,
+            'message' => "$text",
+            'attachments' => $attachments_string, // uploaded image is passed as attachment
+        ];
+
+        if(isset($publish_date)) {
+            $api_request['publish_date'] = $publish_date;
+        }
+
+        $response = $this->api('wall.post', $api_request);
 
         return isset($response->post_id);
     }
