@@ -360,21 +360,26 @@ class Vkontakte
                 $fullServerPathToImage = $image['path'];
             }
 
-            $response = $this->api('photos.getWallUploadServer', [
-                'group_id' => $publicID,
-            ]);
+            try {
+                $response = $this->api('photos.getWallUploadServer', [
+                    'group_id' => $publicID,
+                ]);
 
-            $uploadURL = $response->upload_url;
-            $output = [];
-            exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
-            $response = json_decode($output[0]);
+                $uploadURL = $response->upload_url;
+                $output = [];
+                exec("curl -X POST -F 'photo=@$fullServerPathToImage' '$uploadURL'", $output);
+                $response = json_decode($output[0]);
 
-            $response = $this->api('photos.saveWallPhoto', [
-                'group_id' => $publicID,
-                'photo' => $response->photo,
-                'server' => $response->server,
-                'hash' => $response->hash,
-            ]);
+                $response = $this->api('photos.saveWallPhoto', [
+                    'group_id' => $publicID,
+                    'photo' => $response->photo,
+                    'server' => $response->server,
+                    'hash' => $response->hash,
+                ]);
+            } catch(Expception $e) {
+                echo 'cURL error ' . $e->getMessage() . "\n";
+                continue;
+            }
 
             $attach_images[] = $response[0]->id;
             unlink($fullServerPathToImage);
@@ -408,7 +413,12 @@ class Vkontakte
             $api_request['publish_date'] = $publish_date;
         }
 
-        $response = $this->api('wall.post', $api_request);
+        try {
+            $response = $this->api('wall.post', $api_request);
+        } catch(Expception $e) {
+            echo 'cURL error ' . $e->getMessage() . "\n";
+            continue;
+        }
 
         return isset($response->post_id);
     }
