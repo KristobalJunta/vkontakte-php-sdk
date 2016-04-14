@@ -1,5 +1,5 @@
 {
-    "name": "kristobaljunta/vkontakte-php-sdk",
+    "name": "kristobaljunta/vkontakte-wall-posting",
     "description": "A class for posting to Vkontakte public pages & groups",
     "type": "library",
     "license": "WTFPL",

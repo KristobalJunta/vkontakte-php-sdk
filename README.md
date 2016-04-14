@@ -6,8 +6,6 @@ Vkontakte Wall Posting
 A class for posting to Vkontakte public pages & groups
 
 ```php
-require_once('/path/to/Vkontakte.php');
-
 require_once('../vendor/autoload.php');
 
 use KristobalJunta\Vkontakte;
@@ -34,17 +32,9 @@ $attachments = [
 ];
 
 if ($vkAPI->postToPublic($publicID, "Hello world", $attachments, ['#вконтакте api', '#автопостинг', '#первые шаги'])) {
-
     echo "Yeah, success!\n";
-
 } else {
-
     echo "Error publishing post\n";
-
 }
 
 ```
-
-## TODO
-
-* change composer.json
