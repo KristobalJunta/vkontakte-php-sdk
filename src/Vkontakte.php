@@ -6,13 +6,10 @@
  * @author Kristobal Junta, https://github.com/KristobalJunta
  */
 
-namespace Junta;
+namespace KristobalJunta;
 
 class Vkontakte
 {
-
-    const VERSION = '5.5';
-
     /**
      * The application ID
      * @var integer
@@ -102,7 +99,6 @@ class Vkontakte
      */
     public function getAppId()
     {
-
         return $this->appId;
     }
 
@@ -124,7 +120,6 @@ class Vkontakte
      */
     public function getSecret()
     {
-
         return $this->secret;
     }
 
@@ -146,7 +141,6 @@ class Vkontakte
      */
     public function getScope()
     {
-
         return $this->scope;
     }
 
@@ -168,7 +162,6 @@ class Vkontakte
      */
     public function getRedirectUri()
     {
-
         return $this->redirect_uri;
     }
 
@@ -190,7 +183,6 @@ class Vkontakte
      */
     public function getResponceType()
     {
-
         return $this->responceType;
     }
 
@@ -200,7 +192,6 @@ class Vkontakte
      */
     public function getLoginUrl()
     {
-
         return 'https://oauth.vk.com/authorize'
         . '?client_id=' . urlencode($this->getAppId())
         . '&scope=' . urlencode(implode(',', $this->getScope()))
@@ -215,7 +206,6 @@ class Vkontakte
      */
     public function isAccessTokenExpired()
     {
-
         return time() > $this->accessToken->created + $this->accessToken->expires_in;
     }
 
@@ -263,7 +253,6 @@ class Vkontakte
      */
     public function getAccessToken()
     {
-
         return json_encode($this->accessToken);
     }
 
@@ -350,13 +339,13 @@ class Vkontakte
         $attach_images = [];
 
         foreach ($attachments['images'] as $image) {
-            if(isset($image['url'])) {
+            if (isset($image['url'])) {
                 $image_name = explode('/', $image['url']);
                 $image_name = $image_name[count($image_name) - 1];
 
                 $fullServerPathToImage = __DIR__ . "/tmp/$image_name";
                 file_put_contents($fullServerPathToImage, file_get_contents($image['url']));
-            } elseif(isset($image['path'])) {
+            } elseif (isset($image['path'])) {
                 $fullServerPathToImage = $image['path'];
             }
 
@@ -409,7 +398,7 @@ class Vkontakte
             'attachments' => $attachments_string, // uploaded image is passed as attachment
         ];
 
-        if(isset($publish_date)) {
+        if (isset($publish_date)) {
             $api_request['publish_date'] = $publish_date;
         }
 
