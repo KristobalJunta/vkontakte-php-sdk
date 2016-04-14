@@ -3,14 +3,18 @@ vkontakte-wall-posting
 
 Vkontakte Wall Posting
 
-An example of VK API usage. The code looks like
+A class for posting to Vkontakte public pages & groups
 
 ```php
 require_once('/path/to/Vkontakte.php');
 
+require_once('../vendor/autoload.php');
+
+use KristobalJunta\Vkontakte;
+
 $accessToken = 'your access token';
 $publicID = 'your public ID here';
-$vkAPI = new \Junta\Vkontakte(['access_token' => $accessToken]);
+$vkAPI = new Vkontakte(['access_token' => $accessToken]);
 
 $attachments = [
     'images' => [

@@ -1,10 +1,12 @@
 <?php
 
-require_once('../src/Vkontakte.php');
+require_once('../vendor/autoload.php');
+
+use KristobalJunta\Vkontakte;
 
 $accessToken = 'your access token';
 $publicID = 'your public ID here';
-$vkAPI = new \Junta\Vkontakte(['access_token' => $accessToken]);
+$vkAPI = new Vkontakte(['access_token' => $accessToken]);
 
 $attachments = [
     'images' => [
