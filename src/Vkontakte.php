@@ -50,7 +50,7 @@ class Vkontakte
      * The Vkontakte instance constructor for quick configuration
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct(array $config = array())
     {
         if (isset($config['access_token'])) {
             $this->setAccessToken(json_encode(['access_token' => $config['access_token']]));
