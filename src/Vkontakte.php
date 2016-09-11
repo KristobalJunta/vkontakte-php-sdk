@@ -406,7 +406,6 @@ class Vkontakte
             $response = $this->api('wall.post', $api_request);
         } catch(Expception $e) {
             echo 'cURL error ' . $e->getMessage() . "\n";
-            continue;
         }
 
         return isset($response->post_id);
