@@ -260,7 +260,7 @@ class Vkontakte
      * Make an API call to https://api.vk.com/method/
      * @return string The response, decoded from json format
      */
-    public function api($method, array $query = array())
+    public function api($method, array $query = array(), $useAccessToken = false)
     {
         /* Generate query string from array */
         $parameters = array();
@@ -276,10 +276,16 @@ class Vkontakte
         }
 
         $q = implode('&', $parameters);
-        if (count($query) > 0) {
-            $q .= '&'; // Add "&" sign for access_token if query exists
+
+        if ($useAccessToken) {
+            if (count($query) > 0) {
+                $q .= '&'; // Add "&" sign for access_token if query exists
+            }
+            $url = 'https://api.vk.com/method/' . $method . '?' . $q . 'access_token=' . $this->accessToken->access_token;
+        } else {
+            $url = 'https://api.vk.com/method/' . $method . '?' . $q;
         }
-        $url = 'https://api.vk.com/method/' . $method . '?' . $q . 'access_token=' . $this->accessToken->access_token;
+
         $result = json_decode($this->curl($url));
 
         if (isset($result->response)) {
