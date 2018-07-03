@@ -309,7 +309,7 @@ class Vkontakte
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_SSLVERSION,'all');
+        curl_setopt($ch, CURLOPT_SSL_SESSIONID_CACHE, 0);
 
         $result = curl_exec($ch);
 
