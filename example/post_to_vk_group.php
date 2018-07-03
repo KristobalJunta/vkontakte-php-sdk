@@ -20,7 +20,7 @@ $attachments = [
             'type' => 'image',
             'path' => '/full/path/to/image'
         ]
-    ]
+    ],
     # attaching link (there can be only one)
     'link' => 'link-url'
 ];
