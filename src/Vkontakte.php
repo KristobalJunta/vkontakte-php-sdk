@@ -279,7 +279,7 @@ class Vkontakte
 
         if ($useAccessToken) {
             if (count($query) > 0) {
-                $q .= '&'; // Add "&" sign for access_token if query exists
+                $q .= '&';
             }
             $url = 'https://api.vk.com/method/' . $method . '?' . $q . 'access_token=' . $this->accessToken->access_token;
         } else {
@@ -304,17 +304,13 @@ class Vkontakte
      */
     protected function curl($url)
     {
-        // create curl resource
         $ch = curl_init();
 
-        // set url
         curl_setopt($ch, CURLOPT_URL, $url);
-        // return the transfer as a string
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        // disable SSL verifying
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSLVERSION,'all');
 
-        // $output contains the output string
         $result = curl_exec($ch);
 
         if (!$result) {
@@ -322,7 +318,6 @@ class Vkontakte
             $error = curl_error($ch);
         }
 
-        // close curl resource to free up system resources
         curl_close($ch);
 
         if (isset($errno) && isset($error)) {
