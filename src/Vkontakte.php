@@ -259,7 +259,7 @@ class Vkontakte
 
     /**
      * Make an API call to https://api.vk.com/method/
-     * @return string The response, decoded from json format
+     * @return mixed The response, decoded from json format
      * @throws \Exception
      */
     public function api($method, array $query = array(), $useAccessToken = false)
