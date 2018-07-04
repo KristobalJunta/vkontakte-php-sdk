@@ -213,6 +213,7 @@ class Vkontakte
      * Authenticate user and get access token from server
      * @param string $code
      * @return \Vkontakte
+     * @throws \Exception
      */
     public function authenticate($code = NULL)
     {
@@ -226,7 +227,7 @@ class Vkontakte
 
         $token = $this->curl($url);
         $data = json_decode($token);
-        $data->created = time(); // add access token created unix timestamp
+        $data->created = time();
         $token = json_encode($data);
 
         $this->setAccessToken($token);
@@ -259,10 +260,10 @@ class Vkontakte
     /**
      * Make an API call to https://api.vk.com/method/
      * @return string The response, decoded from json format
+     * @throws \Exception
      */
     public function api($method, array $query = array(), $useAccessToken = false)
     {
-        /* Generate query string from array */
         $parameters = array();
         foreach ($query as $param => $value) {
             $q = $param . '=';
@@ -396,7 +397,7 @@ class Vkontakte
             'owner_id' => -$publicID,
             'from_group' => 1,
             'message' => "$text",
-            'attachments' => $attachments_string, // uploaded image is passed as attachment
+            'attachments' => $attachments_string,
         ];
 
         if (isset($publish_date)) {
